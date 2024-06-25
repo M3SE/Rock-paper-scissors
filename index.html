@@ -4,95 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rock, Paper, Scissors Game</title>
-    <style>
-        .player {
-            margin: 10px;
-            padding: 10px;
-            border: 1px solid #000;
-        }
-        .highlight {
-            animation: highlight 0.5s;
-        }
-        @keyframes highlight {
-            from {
-                background-color: yellow;
-            }
-            to {
-                background-color: transparent;
-            }
-        }
-        .choices {
-            display: flex;
-            gap: 10px;
-            margin: 10px 0;
-        }
-        .hand-icon {
-            font-size: 2em;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <div id="game">
-        <div>
-            <label for="player1-name-input">Player 1 Name:</label>
-            <input type="text" id="player1-name-input" value="Patrick">
-        </div>
-        <div>
-            <label for="player2-name-input">Player 2 Name:</label>
-            <input type="text" id="player2-name-input" value="Jason">
-        </div>
-        <div>
-            <label for="player3-name-input">Player 3 Name:</label>
-            <input type="text" id="player3-name-input" value="Sarah">
-        </div>
-        <div>
-            <label for="player4-name-input">Player 4 Name:</label>
-            <input type="text" id="player4-name-input" value="Emily">
-        </div>
-        <div id="player1" class="player">
-            <h2>Player 1: <span id="player1-name">Patrick</span></h2>
-            <p>Score: <span id="player1-score">0</span></p>
-            <div class="choices">
-                <button class="hand-choice" data-player="1" data-hand="rock"><i class="fas fa-hand-rock hand-icon"></i></button>
-                <button class="hand-choice" data-player="1" data-hand="paper"><i class="fas fa-hand-paper hand-icon"></i></button>
-                <button class="hand-choice" data-player="1" data-hand="scissors"><i class="fas fa-hand-scissors hand-icon"></i></button>
+    <div id="game-container">
+        <div class="input-container">
+            <div>
+                <label for="player1-name-input">Player 1 Name:</label>
+                <input type="text" id="player1-name-input" value="">
             </div>
-            <div>Chosen hand: <span id="player1-chosen-hand"></span></div>
-        </div>
-        <div id="player2" class="player">
-            <h2>Player 2: <span id="player2-name">Jason</span></h2>
-            <p>Score: <span id="player2-score">0</span></p>
-            <div class="choices">
-                <button class="hand-choice" data-player="2" data-hand="rock"><i class="fas fa-hand-rock hand-icon"></i></button>
-                <button class="hand-choice" data-player="2" data-hand="paper"><i class="fas fa-hand-paper hand-icon"></i></button>
-                <button class="hand-choice" data-player="2" data-hand="scissors"><i class="fas fa-hand-scissors hand-icon"></i></button>
+            <div>
+                <label for="player2-name-input">Player 2 Name:</label>
+                <input type="text" id="player2-name-input">
             </div>
-            <div>Chosen hand: <span id="player2-chosen-hand"></span></div>
         </div>
-        <div id="player3" class="player">
-            <h2>Player 3: <span id="player3-name">Sarah</span></h2>
-            <p>Score: <span id="player3-score">0</span></p>
-            <div class="choices">
-                <button class="hand-choice" data-player="3" data-hand="rock"><i class="fas fa-hand-rock hand-icon"></i></button>
-                <button class="hand-choice" data-player="3" data-hand="paper"><i class="fas fa-hand-paper hand-icon"></i></button>
-                <button class="hand-choice" data-player="3" data-hand="scissors"><i class="fas fa-hand-scissors hand-icon"></i></button>
+        <div class="player-row">
+            <div id="player1" class="player">
+                <h2>Player 1</span></h2>
+                <p>Score: <span id="player1-score">0</span></p>
+                <div class="choices">
+                    <button class="hand-choice" data-player="1" data-hand="rock"><i class="fas fa-hand-rock hand-icon"></i></button>
+                    <button class="hand-choice" data-player="1" data-hand="paper"><i class="fas fa-hand-paper hand-icon"></i></button>
+                    <button class="hand-choice" data-player="1" data-hand="scissors"><i class="fas fa-hand-scissors hand-icon"></i></button>
+                </div>
+                <div>Chosen hand: <span id="player1-chosen-hand"></span></div>
             </div>
-            <div>Chosen hand: <span id="player3-chosen-hand"></span></div>
-        </div>
-        <div id="player4" class="player">
-            <h2>Player 4: <span id="player4-name">Emily</span></h2>
-            <p>Score: <span id="player4-score">0</span></p>
-            <div class="choices">
-                <button class="hand-choice" data-player="4" data-hand="rock"><i class="fas fa-hand-rock hand-icon"></i></button>
-                <button class="hand-choice" data-player="4" data-hand="paper"><i class="fas fa-hand-paper hand-icon"></i></button>
-                <button class="hand-choice" data-player="4" data-hand="scissors"><i class="fas fa-hand-scissors hand-icon"></i></button>
+            <div id="player2" class="player">
+                <h2>Player 2</h2>
+                <p>Score: <span id="player2-score">0</span></p>
+                <div class="choices">
+                    <i class="fas fa-hand-rock hand-icon" id="player2-hand-rock"></i>
+                    <i class="fas fa-hand-paper hand-icon" id="player2-hand-paper"></i>
+                    <i class="fas fa-hand-scissors hand-icon" id="player2-hand-scissors"></i>
+                </div>
+                <div>Chosen hand: <span id="player2-chosen-hand"></span></div>
             </div>
-            <div>Chosen hand: <span id="player4-chosen-hand"></span></div>
         </div>
         <div id="result"></div>
-        <button id="play-game">Play Game</button>
-        <button id="reset">Reset Game</button>
+        <div class="button-container">
+            <button id="play-round">Play Round</button>
+            <button id="reset">Reset Game</button>
+        </div>
     </div>
     <script src="rps.js"></script>
 </body>

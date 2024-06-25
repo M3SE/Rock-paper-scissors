@@ -1,7 +1,11 @@
 let player1Hand = null;
 let player2Hand = null;
-let player3Hand = null;
-let player4Hand = null;
+
+// Function to generate a random hand
+function getRandomHand() {
+    const hands = ['rock', 'paper', 'scissors'];
+    return hands[Math.floor(Math.random() * hands.length)];
+}
 
 // Function to play a round of Rock, Paper, Scissors
 function playRound(player1, player2) {
@@ -35,76 +39,15 @@ function playRound(player1, player2) {
     return winner;
 }
 
-// Function to play a game until one player wins a specified number of rounds
-function playGame(player1, player2, playUntil) {
-    let player1Wins = 0;
-    let player2Wins = 0;
-
-    // Set player names in the DOM
-    document.getElementById('player1-name').textContent = player1.name;
-    document.getElementById('player2-name').textContent = player2.name;
-
-    while (player1Wins < playUntil && player2Wins < playUntil) {
-        if (player1Hand === null || player2Hand === null) {
-            document.getElementById('result').textContent = 'Both players must choose a hand.';
-            return;
-        }
-
-        const winner = playRound(player1, player2);
-        if (winner === player1) {
-            player1Wins++;
-            animateScore('player1-score');
-        } else if (winner === player2) {
-            player2Wins++;
-            animateScore('player2-score');
-        }
-
-        // Update scores in the DOM
-        document.getElementById('player1-score').textContent = player1Wins;
-        document.getElementById('player2-score').textContent = player2Wins;
+// Function to play a single round
+function playSingleRound() {
+    if (player1Hand === null) {
+        document.getElementById('result').textContent = 'Player 1 must choose a hand.';
+        return;
     }
 
-    const gameWinner = player1Wins === playUntil ? player1 : player2;
-    console.log(`${gameWinner.name} wins the game!`);
-    document.getElementById('result').textContent = `${gameWinner.name} wins the game!`;
-    return gameWinner;
-}
-
-// Function to animate score updates
-function animateScore(scoreId) {
-    const scoreElement = document.getElementById(scoreId);
-    scoreElement.classList.add('highlight');
-    setTimeout(() => {
-        scoreElement.classList.remove('highlight');
-    }, 500);
-}
-
-// Function to reset the game
-function resetGame() {
-    document.getElementById('player1-score').textContent = 0;
-    document.getElementById('player2-score').textContent = 0;
-    document.getElementById('player3-score').textContent = 0;
-    document.getElementById('player4-score').textContent = 0;
-    document.getElementById('result').textContent = '';
-    document.getElementById('player1-chosen-hand').textContent = '';
-    document.getElementById('player2-chosen-hand').textContent = '';
-    document.getElementById('player3-chosen-hand').textContent = '';
-    document.getElementById('player4-chosen-hand').textContent = '';
-    player1Hand = null;
-    player2Hand = null;
-    player3Hand = null;
-    player4Hand = null;
-}
-
-// Add event listener for the reset button
-document.getElementById('reset').addEventListener('click', resetGame);
-
-// Add event listener for the play game button
-document.getElementById('play-game').addEventListener('click', () => {
     const player1Name = document.getElementById('player1-name-input').value;
     const player2Name = document.getElementById('player2-name-input').value;
-    const player3Name = document.getElementById('player3-name-input').value;
-    const player4Name = document.getElementById('player4-name-input').value;
 
     const player1 = {
         name: player1Name,
@@ -122,51 +65,71 @@ document.getElementById('play-game').addEventListener('click', () => {
         }
     };
 
-    const player3 = {
-        name: player3Name,
-        identifier: 'Player 3',
-        getHand: function() {
-            return player3Hand;
-        }
+    player2Hand = getRandomHand();
+    document.getElementById('player2-chosen-hand').innerHTML = getHandIcon(player2Hand);
+
+    const winner = playRound(player1, player2);
+    if (winner === player1) {
+        updateScore('player1-score');
+    } else if (winner === player2) {
+        updateScore('player2-score');
+    }
+
+    document.getElementById('result').textContent = winner === null ? "It's a tie!" : `${winner.name} wins the round!`;
+}
+
+// Function to animate score updates
+function animateScore(scoreId) {
+    const scoreElement = document.getElementById(scoreId);
+    scoreElement.classList.add('highlight');
+    setTimeout(() => {
+        scoreElement.classList.remove('highlight');
+    }, 500);
+}
+
+// Function to update score
+function updateScore(scoreId) {
+    const scoreElement = document.getElementById(scoreId);
+    scoreElement.textContent = parseInt(scoreElement.textContent) + 1;
+    animateScore(scoreId);
+}
+
+// Function to reset the game
+function resetGame() {
+    document.getElementById('player1-score').textContent = 0;
+    document.getElementById('player2-score').textContent = 0;
+    document.getElementById('result').textContent = '';
+    document.getElementById('player1-chosen-hand').textContent = '';
+    document.getElementById('player2-chosen-hand').textContent = '';
+    player1Hand = null;
+    player2Hand = null;
+}
+
+// Function to get hand icon
+function getHandIcon(hand) {
+    const handIcons = {
+        'rock': '<i class="fas fa-hand-rock"></i>',
+        'paper': '<i class="fas fa-hand-paper"></i>',
+        'scissors': '<i class="fas fa-hand-scissors"></i>'
     };
+    return handIcons[hand];
+}
 
-    const player4 = {
-        name: player4Name,
-        identifier: 'Player 4',
-        getHand: function() {
-            return player4Hand;
-        }
-    };
+// Add event listener for the reset button
+document.getElementById('reset').addEventListener('click', resetGame);
 
-    const semiFinalWinner1 = playGame(player1, player2, 3);
-    const semiFinalWinner2 = playGame(player3, player4, 3);
-
-    playGame(semiFinalWinner1, semiFinalWinner2, 3);
-});
+// Add event listener for the play round button
+document.getElementById('play-round').addEventListener('click', playSingleRound);
 
 // Add event listeners for hand choice buttons
 document.querySelectorAll('.hand-choice').forEach(button => {
     button.addEventListener('click', () => {
         const player = button.getAttribute('data-player');
         const hand = button.getAttribute('data-hand');
-        const handIcons = {
-            'rock': '<i class="fas fa-hand-rock"></i>',
-            'paper': '<i class="fas fa-hand-paper"></i>',
-            'scissors': '<i class="fas fa-hand-scissors"></i>'
-        };
 
         if (player === '1') {
             player1Hand = hand;
-            document.getElementById('player1-chosen-hand').innerHTML = handIcons[hand];
-        } else if (player === '2') {
-            player2Hand = hand;
-            document.getElementById('player2-chosen-hand').innerHTML = handIcons[hand];
-        } else if (player === '3') {
-            player3Hand = hand;
-            document.getElementById('player3-chosen-hand').innerHTML = handIcons[hand];
-        } else if (player === '4') {
-            player4Hand = hand;
-            document.getElementById('player4-chosen-hand').innerHTML = handIcons[hand];
+            document.getElementById('player1-chosen-hand').innerHTML = getHandIcon(hand);
         }
 
         document.getElementById('result').textContent = `Player ${player} chose ${hand}`;
