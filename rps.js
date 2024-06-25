@@ -1,3 +1,6 @@
+let player1Hand = null;
+let player2Hand = null;
+
 // Function to play a round of Rock, Paper, Scissors
 function playRound(player1, player2) {
     const hand1 = player1.getHand();
@@ -35,76 +38,106 @@ function playGame(player1, player2, playUntil) {
     let player1Wins = 0;
     let player2Wins = 0;
 
+    // Set player names in the DOM
+    document.getElementById('player1-name').textContent = player1.name;
+    document.getElementById('player2-name').textContent = player2.name;
+
     while (player1Wins < playUntil && player2Wins < playUntil) {
+        if (player1Hand === null || player2Hand === null) {
+            document.getElementById('result').textContent = 'Both players must choose a hand.';
+            return;
+        }
+
         const winner = playRound(player1, player2);
         if (winner === player1) {
             player1Wins++;
+            animateScore('player1-score');
         } else if (winner === player2) {
             player2Wins++;
+            animateScore('player2-score');
         }
+
+        // Update scores in the DOM
+        document.getElementById('player1-score').textContent = player1Wins;
+        document.getElementById('player2-score').textContent = player2Wins;
     }
 
     const gameWinner = player1Wins === playUntil ? player1 : player2;
     console.log(`${gameWinner.name} wins the game!`);
+    document.getElementById('result').textContent = `${gameWinner.name} wins the game!`;
     return gameWinner;
 }
 
-// Function to play a tournament with 4 players
-function playTournament(players, playUntil) {
-    // Semi-final 1
-    const semiFinalWinner1 = playGame(players[0], players[1], playUntil);
-    
-    // Semi-final 2
-    const semiFinalWinner2 = playGame(players[2], players[3], playUntil);
-
-    // Final
-    const tournamentWinner = playGame(semiFinalWinner1, semiFinalWinner2, playUntil);
-    console.log(`${tournamentWinner.name} is the world champion`);
-    return tournamentWinner;
+// Function to animate score updates
+function animateScore(scoreId) {
+    const scoreElement = document.getElementById(scoreId);
+    scoreElement.classList.add('highlight');
+    setTimeout(() => {
+        scoreElement.classList.remove('highlight');
+    }, 500);
 }
 
-// Example player objects with getHand method, name property, and identifier
-const player1 = {
-    name: 'Patrick',
-    identifier: 'Player 1',
-    getHand: function() {
-        const hands = ['rock', 'paper', 'scissors'];
-        return hands[Math.floor(Math.random() * hands.length)];
-    }
-};
+// Function to reset the game
+function resetGame() {
+    document.getElementById('player1-score').textContent = 0;
+    document.getElementById('player2-score').textContent = 0;
+    document.getElementById('result').textContent = '';
+    document.getElementById('player1-chosen-hand').textContent = '';
+    document.getElementById('player2-chosen-hand').textContent = '';
+    player1Hand = null;
+    player2Hand = null;
+}
 
-const player2 = {
-    name: 'Jason',
-    identifier: 'Player 2',
-    getHand: function() {
-        const hands = ['rock', 'paper', 'scissors'];
-        return hands[Math.floor(Math.random() * hands.length)];
-    }
-};
+// Add event listener for the reset button
+document.getElementById('reset').addEventListener('click', resetGame);
 
-const player3 = {
-    name: 'Sarah',
-    identifier: 'Player 3',
-    getHand: function() {
-        const hands = ['rock', 'paper', 'scissors'];
-        return hands[Math.floor(Math.random() * hands.length)];
-    }
-};
+// Add event listener for the play game button
+document.getElementById('play-game').addEventListener('click', () => {
+    const player1Name = document.getElementById('player1-name-input').value;
+    const player2Name = document.getElementById('player2-name-input').value;
 
-const player4 = {
-    name: 'Emily',
-    identifier: 'Player 4',
-    getHand: function() {
-        const hands = ['rock', 'paper', 'scissors'];
-        return hands[Math.floor(Math.random() * hands.length)];
-    }
-};
+    const player1 = {
+        name: player1Name,
+        identifier: 'Player 1',
+        getHand: function() {
+            return player1Hand;
+        }
+    };
 
-// Play a game to 3 wins
-const winner = playGame(player1, player2, 3);
+    const player2 = {
+        name: player2Name,
+        identifier: 'Player 2',
+        getHand: function() {
+            return player2Hand;
+        }
+    };
 
-// Play a tournament
-const tournamentWinner = playTournament([player1, player2, player3, player4], 3);
+    playGame(player1, player2, 3);
+});
+
+// Add event listeners for hand choice buttons
+document.querySelectorAll('.hand-choice').forEach(button => {
+    button.addEventListener('click', () => {
+        const player = button.getAttribute('data-player');
+        const hand = button.getAttribute('data-hand');
+        const handIcons = {
+            'rock': '<i class="fas fa-hand-rock"></i>',
+            'paper': '<i class="fas fa-hand-paper"></i>',
+            'scissors': '<i class="fas fa-hand-scissors"></i>'
+        };
+
+        if (player === '1') {
+            player1Hand = hand;
+            document.getElementById('player1-chosen-hand').innerHTML = handIcons[hand];
+        } else if (player === '2') {
+            player2Hand = hand;
+            document.getElementById('player2-chosen-hand').innerHTML = handIcons[hand];
+        }
+
+        document.getElementById('result').textContent = `Player ${player} chose ${hand}`;
+    });
+});
+
 
 
 
