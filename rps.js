@@ -1,5 +1,7 @@
 let player1Hand = null;
 let player2Hand = null;
+let player3Hand = null;
+let player4Hand = null;
 
 // Function to play a round of Rock, Paper, Scissors
 function playRound(player1, player2) {
@@ -81,11 +83,17 @@ function animateScore(scoreId) {
 function resetGame() {
     document.getElementById('player1-score').textContent = 0;
     document.getElementById('player2-score').textContent = 0;
+    document.getElementById('player3-score').textContent = 0;
+    document.getElementById('player4-score').textContent = 0;
     document.getElementById('result').textContent = '';
     document.getElementById('player1-chosen-hand').textContent = '';
     document.getElementById('player2-chosen-hand').textContent = '';
+    document.getElementById('player3-chosen-hand').textContent = '';
+    document.getElementById('player4-chosen-hand').textContent = '';
     player1Hand = null;
     player2Hand = null;
+    player3Hand = null;
+    player4Hand = null;
 }
 
 // Add event listener for the reset button
@@ -95,6 +103,8 @@ document.getElementById('reset').addEventListener('click', resetGame);
 document.getElementById('play-game').addEventListener('click', () => {
     const player1Name = document.getElementById('player1-name-input').value;
     const player2Name = document.getElementById('player2-name-input').value;
+    const player3Name = document.getElementById('player3-name-input').value;
+    const player4Name = document.getElementById('player4-name-input').value;
 
     const player1 = {
         name: player1Name,
@@ -112,7 +122,26 @@ document.getElementById('play-game').addEventListener('click', () => {
         }
     };
 
-    playGame(player1, player2, 3);
+    const player3 = {
+        name: player3Name,
+        identifier: 'Player 3',
+        getHand: function() {
+            return player3Hand;
+        }
+    };
+
+    const player4 = {
+        name: player4Name,
+        identifier: 'Player 4',
+        getHand: function() {
+            return player4Hand;
+        }
+    };
+
+    const semiFinalWinner1 = playGame(player1, player2, 3);
+    const semiFinalWinner2 = playGame(player3, player4, 3);
+
+    playGame(semiFinalWinner1, semiFinalWinner2, 3);
 });
 
 // Add event listeners for hand choice buttons
@@ -132,12 +161,17 @@ document.querySelectorAll('.hand-choice').forEach(button => {
         } else if (player === '2') {
             player2Hand = hand;
             document.getElementById('player2-chosen-hand').innerHTML = handIcons[hand];
+        } else if (player === '3') {
+            player3Hand = hand;
+            document.getElementById('player3-chosen-hand').innerHTML = handIcons[hand];
+        } else if (player === '4') {
+            player4Hand = hand;
+            document.getElementById('player4-chosen-hand').innerHTML = handIcons[hand];
         }
 
         document.getElementById('result').textContent = `Player ${player} chose ${hand}`;
     });
 });
-
 
 
 
